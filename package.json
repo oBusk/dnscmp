@@ -1,8 +1,20 @@
 {
   "name": "dnscmp",
-  "module": "src/index.ts",
+  "version": "0.0.1",
   "type": "module",
-  "private": true,
+  "exports": {
+    ".": "./dist/lib.js"
+  },
+  "bin": {
+    "dnscmp": "dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bun build src/lib.ts --target=node --outfile=dist/lib.js && bun build src/cli.ts --target=node --outfile=dist/cli.js --banner='#!/usr/bin/env node'",
+    "start": "bun run src/cli.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
