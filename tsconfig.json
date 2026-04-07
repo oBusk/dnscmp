@@ -12,6 +12,8 @@
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "isolatedDeclarations": true,
     "noEmit": true,
 
     // Best practices
