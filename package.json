@@ -3,7 +3,10 @@
   "version": "0.0.1",
   "type": "module",
   "exports": {
-    ".": "./dist/lib.js"
+    ".": {
+      "types": "./dist/lib.d.ts",
+      "default": "./dist/lib.js"
+    }
   },
   "bin": {
     "dnscmp": "dist/cli.js"
@@ -12,13 +15,15 @@
     "dist"
   ],
   "scripts": {
-    "build": "bun build src/lib.ts --target=node --outfile=dist/lib.js && bun build src/cli.ts --target=node --outfile=dist/cli.js --banner='#!/usr/bin/env node'",
+    "build": "bun run build.ts",
     "start": "bun run src/cli.ts"
   },
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
+    "bun-plugin-isolated-decl": "^0.2",
+    "oxc-transform": "~0.123",
     "typescript": "^5"
   }
 }
