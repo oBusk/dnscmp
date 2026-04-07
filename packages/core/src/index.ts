@@ -23,7 +23,13 @@ async function measureAvg(ip: string): Promise<number> {
   return total / (TRIES * DOMAINS.length);
 }
 
-export async function dnscmp(): Promise<void> {
+export interface DnsResult {
+  name: string;
+  ip: string;
+  avg: number;
+}
+
+export async function dnscmp(): Promise<DnsResult[]> {
   const results = await Promise.all(
     SERVERS.map(async ({ name, ip }) => ({
       name,
@@ -34,7 +40,5 @@ export async function dnscmp(): Promise<void> {
 
   results.sort((a, b) => a.avg - b.avg);
 
-  for (const { name, ip, avg } of results) {
-    console.log(`${name} (${ip}): ${avg.toFixed(2)}ms`);
-  }
+  return results;
 }
