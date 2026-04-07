@@ -1,0 +1,25 @@
+{
+  "name": "@dnscmp/core",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    ".": {
+      "bun": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "bun run build.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "bun-plugin-isolated-decl": "^0.2",
+    "oxc-transform": "~0.123",
+    "typescript": "^5"
+  }
+}

@@ -1,27 +1,16 @@
 {
-  "name": "dnscmp",
-  "version": "0.0.3",
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/lib.d.ts",
-      "default": "./dist/lib.js"
-    }
-  },
-  "bin": {
-    "dnscmp": "dist/cli.js"
-  },
-  "files": [
-    "dist"
+  "name": "@dnscmp/repo",
+  "private": true,
+  "workspaces": [
+    "packages/*"
   ],
   "scripts": {
-    "build": "bun run build.ts",
-    "start": "bun run src/cli.ts"
+    "build": "bun run --filter '@dnscmp/core' build && bun run --filter 'dnscmp' build",
+    "start": "bun run --cwd packages/cli src/index.ts",
+    "typecheck": "tsc --build"
   },
-  "devDependencies": {
+  "peerDependencies": {
     "@types/bun": "latest",
-    "bun-plugin-isolated-decl": "^0.2",
-    "oxc-transform": "~0.123",
     "typescript": "^5"
   }
 }

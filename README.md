@@ -1,15 +1,25 @@
 # dnscmp
 
-To install dependencies:
+A DNS response time comparison tool. Measures and compares average DNS resolution times across multiple servers and domains.
+
+## Packages
+
+| Package | Description |
+| --- | --- |
+| [`@dnscmp/core`](packages/core) | Core library — DNS timing logic |
+| [`dnscmp`](packages/cli) | CLI tool |
+
+## Development
 
 ```bash
 bun install
+bun start
 ```
 
-To run:
+## Scripts
 
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.3.11. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+| Script | Description |
+| --- | --- |
+| `bun start` | Run the CLI directly from source (no build needed) |
+| `bun run build` | Build all packages for publishing |
+| `bun run typecheck` | Type-check the full project via tsc project references |

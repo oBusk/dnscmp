@@ -1,0 +1,22 @@
+{
+  "name": "dnscmp",
+  "version": "0.0.3",
+  "type": "module",
+  "bin": {
+    "dnscmp": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bun run build.ts",
+    "start": "bun run src/index.ts"
+  },
+  "dependencies": {
+    "@dnscmp/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5"
+  }
+}
