@@ -19,9 +19,7 @@
     "start": "bun run src/cli.ts"
   },
   "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
+    "@types/bun": "latest",
     "bun-plugin-isolated-decl": "^0.2",
     "oxc-transform": "~0.123",
     "typescript": "^5"

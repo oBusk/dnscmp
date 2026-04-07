@@ -6,8 +6,6 @@
       "name": "dnscmp",
       "devDependencies": {
         "@types/bun": "latest",
-      },
-      "peerDependencies": {
         "bun-plugin-isolated-decl": "^0.2",
         "oxc-transform": "~0.123",
         "typescript": "^5",
