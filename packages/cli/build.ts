@@ -1,4 +1,4 @@
-export {};
+import pkg from "./package.json" assert { type: "json" };
 
 await Promise.all([
   Bun.build({
@@ -12,6 +12,13 @@ await Promise.all([
     entrypoints: ["src/index.ts"],
     compile: {
       outfile: "release/dnscmp",
+      windows: {
+        title: "dnscmp",
+        version: pkg.version,
+        description: pkg.description,
+        publisher: pkg.author,
+        copyright: `${new Date().getFullYear()} ${pkg.author}`,
+      },
     },
   }),
 ]);

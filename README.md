@@ -1,13 +1,13 @@
 # dnscmp
 
-A DNS response time comparison tool. Measures and compares average DNS resolution times across multiple servers and domains.
+A small toolkit for benchmarking and comparing DNS resolution times, with a CLI package and a reusable core library.
 
 ## Packages
 
 | Package | Description |
 | --- | --- |
-| [`@dnscmp/core`](packages/core) | Core library — DNS timing logic |
-| [`dnscmp`](packages/cli) | CLI tool |
+| [`@dnscmp/core`](packages/core) | Library for measuring and comparing DNS resolution times |
+| [`dnscmp`](packages/cli) | Command-line interface for running DNS timing comparisons |
 
 ## Development
 

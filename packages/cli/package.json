@@ -1,5 +1,6 @@
 {
   "name": "dnscmp",
+  "description": "Command-line tool for benchmarking and comparing DNS resolution times across DNS providers.",
   "version": "0.0.3",
   "type": "module",
   "bin": {
@@ -8,6 +9,17 @@
   "files": [
     "dist"
   ],
+  "homepage": "https://github.com/oBusk/dnscmp#readme",
+  "bugs": {
+    "url": "https://github.com/oBusk/dnscmp/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oBusk/dnscmp",
+    "directory": "packages/cli"
+  },
+  "license": "MIT",
+  "author": "Oscar Busk (https://github.com/oBusk)",
   "scripts": {
     "build": "bun run build.ts",
     "start": "bun run src/index.ts"

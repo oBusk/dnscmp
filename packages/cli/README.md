@@ -1,6 +1,6 @@
 # dnscmp
 
-CLI tool for comparing DNS response times between providers.
+Command-line tool for benchmarking and comparing DNS resolution times across DNS providers.
 
 ## Usage
 

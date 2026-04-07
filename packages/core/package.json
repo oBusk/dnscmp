@@ -1,5 +1,6 @@
 {
   "name": "@dnscmp/core",
+  "description": "Library for benchmarking and comparing DNS resolution times across DNS providers.",
   "version": "0.0.1",
   "type": "module",
   "exports": {
@@ -13,6 +14,17 @@
     "dist",
     "src"
   ],
+  "homepage": "https://github.com/oBusk/dnscmp#readme",
+  "bugs": {
+    "url": "https://github.com/oBusk/dnscmp/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oBusk/dnscmp",
+    "directory": "packages/core"
+  },
+  "license": "MIT",
+  "author": "Oscar Busk (https://github.com/oBusk)",
   "scripts": {
     "build": "bun run build.ts"
   },
