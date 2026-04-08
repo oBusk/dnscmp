@@ -1,44 +1,99 @@
+import type { DnsProvider, DnsResult } from "@dnscmp/types";
 import { Resolver } from "dns/promises";
 
-const DOMAINS = ["example.com", "example.org", "example.net"];
-const TRIES = 10;
+export type { DnsProvider, DnsResult };
 
-const SERVERS = [
-  { name: "Cloudflare", ip: "1.1.1.1" },
-  { name: "Google", ip: "8.8.8.8" },
-] as const;
+const DEFAULT_DOMAINS = ["example.com", "example.org", "example.net"];
+const DEFAULT_TRIES = 10;
+const QUERY_TIMEOUT_MS = 1000;
+const MAX_CONSECUTIVE_FAILURES = 3;
 
-async function measureAvg(ip: string): Promise<number> {
+export interface DnscmpOptions {
+  providers: DnsProvider[];
+  domains?: string[];
+  tries?: number;
+}
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error("ETIMEOUT")), ms),
+    ),
+  ]);
+}
+
+async function measureAvg(
+  resolverIp: string,
+  domains: string[],
+  tries: number,
+): Promise<number | null> {
   const resolver = new Resolver();
-  resolver.setServers([ip]);
+  resolver.setServers([resolverIp]);
 
   let total = 0;
-  for (let i = 0; i < TRIES; i++) {
-    for (const domain of DOMAINS) {
-      const start = performance.now();
-      await resolver.resolve4(domain);
-      total += performance.now() - start;
+  let count = 0;
+  let consecutiveFailures = 0;
+
+  for (let i = 0; i < tries; i++) {
+    for (const domain of domains) {
+      try {
+        const start = performance.now();
+        await withTimeout(resolver.resolve4(domain), QUERY_TIMEOUT_MS);
+        total += performance.now() - start;
+        count++;
+        consecutiveFailures = 0;
+      } catch {
+        consecutiveFailures++;
+        if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
+          return null;
+        }
+      }
     }
   }
-  return total / (TRIES * DOMAINS.length);
+
+  return count > 0 ? total / count : null;
 }
 
-export interface DnsResult {
-  name: string;
-  ip: string;
-  avg: number;
-}
-
-export async function dnscmp(): Promise<DnsResult[]> {
-  const results = await Promise.all(
-    SERVERS.map(async ({ name, ip }) => ({
-      name,
-      ip,
-      avg: await measureAvg(ip),
+async function measureProvider(
+  provider: DnsProvider,
+  domains: string[],
+  tries: number,
+): Promise<DnsResult> {
+  const resolverResults = await Promise.all(
+    provider.resolvers.map(async (resolverIp) => ({
+      resolverIp,
+      avg: await measureAvg(resolverIp, domains, tries),
     })),
   );
 
-  results.sort((a, b) => a.avg - b.avg);
+  resolverResults.sort((a, b) => {
+    if (a.avg === null && b.avg === null) return 0;
+    if (a.avg === null) return 1;
+    if (b.avg === null) return -1;
+    return a.avg - b.avg;
+  });
+
+  const best = resolverResults[0]!;
+  return { name: provider.name, resolver: best.resolverIp, avg: best.avg };
+}
+
+export async function dnscmp(options: DnscmpOptions): Promise<DnsResult[]> {
+  const domains = options.domains ?? DEFAULT_DOMAINS;
+  const tries = options.tries ?? DEFAULT_TRIES;
+
+  const results = await Promise.all(
+    options.providers.map((provider) =>
+      measureProvider(provider, domains, tries),
+    ),
+  );
+
+  results.sort((a, b) => {
+    if (a.avg === null && b.avg === null) return 0;
+    if (a.avg === null) return 1;
+    if (b.avg === null) return -1;
+    return a.avg - b.avg;
+  });
 
   return results;
 }

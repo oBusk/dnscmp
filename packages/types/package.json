@@ -1,0 +1,24 @@
+{
+  "name": "@dnscmp/types",
+  "private": true,
+  "description": "Shared TypeScript types for dnscmp packages.",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    ".": "./index.d.ts"
+  },
+  "files": [
+    "index.d.ts"
+  ],
+  "homepage": "https://github.com/oBusk/dnscmp#readme",
+  "bugs": {
+    "url": "https://github.com/oBusk/dnscmp/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oBusk/dnscmp",
+    "directory": "packages/types"
+  },
+  "license": "MIT",
+  "author": "Oscar Busk (https://github.com/oBusk)"
+}

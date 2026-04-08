@@ -1,6 +1,7 @@
 {
-  "name": "@dnscmp/core",
-  "description": "Library for benchmarking and comparing DNS resolution times across DNS providers.",
+  "name": "@dnscmp/providers",
+  "private": true,
+  "description": "Curated list of public DNS providers for use with dnscmp.",
   "version": "0.0.1",
   "type": "module",
   "exports": {
@@ -21,7 +22,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/oBusk/dnscmp",
-    "directory": "packages/core"
+    "directory": "packages/providers"
   },
   "license": "MIT",
   "author": "Oscar Busk (https://github.com/oBusk)",

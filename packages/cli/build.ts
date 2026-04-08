@@ -6,7 +6,7 @@ await Promise.all([
     target: "node",
     outdir: "dist",
     banner: "#!/usr/bin/env node",
-    external: ["@dnscmp/core"],
+    external: ["@dnscmp/core", "@dnscmp/providers"],
   }),
   Bun.build({
     entrypoints: ["src/index.ts"],

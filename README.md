@@ -6,7 +6,9 @@ A small toolkit for benchmarking and comparing DNS resolution times, with a CLI 
 
 | Package | Description |
 | --- | --- |
+| [`@dnscmp/types`](packages/types) | Shared TypeScript interfaces (`DnsProvider`, `DnsResult`) |
 | [`@dnscmp/core`](packages/core) | Library for measuring and comparing DNS resolution times |
+| [`@dnscmp/providers`](packages/providers) | Curated list of public DNS providers |
 | [`dnscmp`](packages/cli) | Command-line interface for running DNS timing comparisons |
 
 ## Development

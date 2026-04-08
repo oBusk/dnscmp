@@ -17,6 +17,8 @@
       },
       "dependencies": {
         "@dnscmp/core": "workspace:*",
+        "@dnscmp/providers": "workspace:*",
+        "@dnscmp/types": "workspace:*",
       },
       "devDependencies": {
         "@types/bun": "latest",
@@ -26,6 +28,9 @@
     "packages/core": {
       "name": "@dnscmp/core",
       "version": "0.0.1",
+      "dependencies": {
+        "@dnscmp/types": "workspace:*",
+      },
       "devDependencies": {
         "@types/bun": "latest",
         "bun-plugin-isolated-decl": "^0.2",
@@ -33,9 +38,30 @@
         "typescript": "^5",
       },
     },
+    "packages/providers": {
+      "name": "@dnscmp/providers",
+      "version": "0.0.1",
+      "dependencies": {
+        "@dnscmp/types": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+        "bun-plugin-isolated-decl": "^0.2",
+        "oxc-transform": "~0.123",
+        "typescript": "^5",
+      },
+    },
+    "packages/types": {
+      "name": "@dnscmp/types",
+      "version": "0.0.1",
+    },
   },
   "packages": {
     "@dnscmp/core": ["@dnscmp/core@workspace:packages/core"],
+
+    "@dnscmp/providers": ["@dnscmp/providers@workspace:packages/providers"],
+
+    "@dnscmp/types": ["@dnscmp/types@workspace:packages/types"],
 
     "@emnapi/core": ["@emnapi/core@1.9.2", "", { "dependencies": { "@emnapi/wasi-threads": "1.2.1", "tslib": "^2.4.0" } }, "sha512-UC+ZhH3XtczQYfOlu3lNEkdW/p4dsJ1r/bP7H8+rhao3TTTMO1ATq/4DdIi23XuGoFY+Cz0JmCbdVl0hz9jZcA=="],
 
