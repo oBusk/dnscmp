@@ -29,7 +29,7 @@
     "build": "bun run build.ts"
   },
   "dependencies": {
-    "@dnscmp/types": "workspace:*"
+    "@dnscmp/types": "workspace:~"
   },
   "devDependencies": {
     "@types/bun": "latest",

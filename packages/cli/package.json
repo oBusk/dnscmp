@@ -25,9 +25,9 @@
     "start": "bun run src/index.ts"
   },
   "dependencies": {
-    "@dnscmp/core": "workspace:*",
-    "@dnscmp/providers": "workspace:*",
-    "@dnscmp/types": "workspace:*"
+    "@dnscmp/core": "workspace:~",
+    "@dnscmp/providers": "workspace:~",
+    "@dnscmp/types": "workspace:~"
   },
   "devDependencies": {
     "@types/bun": "latest",
