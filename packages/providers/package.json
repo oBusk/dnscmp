@@ -1,6 +1,5 @@
 {
   "name": "@dnscmp/providers",
-  "private": true,
   "description": "Curated list of public DNS providers for use with dnscmp.",
   "version": "0.0.1",
   "type": "module",

@@ -1,6 +1,5 @@
 {
   "name": "@dnscmp/types",
-  "private": true,
   "description": "Shared TypeScript types for dnscmp packages.",
   "version": "0.0.1",
   "type": "module",
