@@ -1,0 +1,28 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
+      cli_release_created: ${{ steps.release.outputs['dnscmp--release_created'] }}
+      cli_tag_name: ${{ steps.release.outputs['dnscmp--tag_name'] }}
+      cli_version: ${{ steps.release.outputs['dnscmp--version'] }}
+      core_release_created: ${{ steps.release.outputs['@dnscmp/core--release_created'] }}
+      providers_release_created: ${{ steps.release.outputs['@dnscmp/providers--release_created'] }}
+      types_release_created: ${{ steps.release.outputs['@dnscmp/types--release_created'] }}
+    steps:
+      - uses: google-github-actions/release-please-action@v4
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
