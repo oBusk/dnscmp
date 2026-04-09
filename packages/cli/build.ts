@@ -11,7 +11,7 @@ await Promise.all([
   Bun.build({
     entrypoints: ["src/index.ts"],
     compile: {
-      outfile: "release/dnscmp",
+      outfile: `release/dnscmp-${pkg.version}`,
       windows: {
         title: "dnscmp",
         version: pkg.version,
