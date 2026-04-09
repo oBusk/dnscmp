@@ -1,6 +1,6 @@
 {
-  "packages/cli": "0.0.4",
-  "packages/core": "0.0.2",
-  "packages/providers": "0.0.2",
-  "packages/types": "0.0.2"
+  "packages/cli": "0.0.5",
+  "packages/core": "0.0.3",
+  "packages/providers": "0.0.3",
+  "packages/types": "0.0.3"
 }
