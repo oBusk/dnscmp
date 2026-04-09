@@ -14,12 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       releases_created: ${{ steps.release.outputs.releases_created }}
-      cli_release_created: ${{ steps.release.outputs['dnscmp--release_created'] }}
-      cli_tag_name: ${{ steps.release.outputs['dnscmp--tag_name'] }}
-      cli_version: ${{ steps.release.outputs['dnscmp--version'] }}
-      core_release_created: ${{ steps.release.outputs['@dnscmp/core--release_created'] }}
-      providers_release_created: ${{ steps.release.outputs['@dnscmp/providers--release_created'] }}
-      types_release_created: ${{ steps.release.outputs['@dnscmp/types--release_created'] }}
+      cli_release_created: ${{ steps.release.outputs['packages/cli--release_created'] }}
+      cli_tag_name: ${{ steps.release.outputs['packages/cli--tag_name'] }}
+      cli_version: ${{ steps.release.outputs['packages/cli--version'] }}
+      core_release_created: ${{ steps.release.outputs['packages/core--release_created'] }}
+      providers_release_created: ${{ steps.release.outputs['packages/providers--release_created'] }}
+      types_release_created: ${{ steps.release.outputs['packages/types--release_created'] }}
     steps:
       - uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 # v4.4.0
         id: release
