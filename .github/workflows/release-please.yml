@@ -89,15 +89,48 @@ jobs:
       - name: Build binary
         run: bun run --cwd packages/cli build
 
-      - name: Upload binary to GitHub Release (unix)
-        if: runner.os != 'Windows'
+      - name: Upload binary to GitHub Release (linux)
+        if: runner.os == 'Linux'
         run: |
-          BINARY="packages/cli/release/dnscmp-${{ needs.release-please.outputs.cli_version }}"
-          gh release upload "${{ needs.release-please.outputs.cli_tag_name }}" "$BINARY"
+          VERSION="${{ needs.release-please.outputs.cli_version }}"
+          RAW_ARCH=$(uname -m)
+          case "$RAW_ARCH" in
+            x86_64) ARCH="x64" ;;
+            aarch64|arm64) ARCH="arm64" ;;
+            *) ARCH="$RAW_ARCH" ;;
+          esac
+          SRC="packages/cli/release/dnscmp-${VERSION}"
+          DEST="packages/cli/release/dnscmp-${VERSION}-linux-${ARCH}"
+          mv "$SRC" "$DEST"
+          gh release upload "${{ needs.release-please.outputs.cli_tag_name }}" "$DEST"
+
+      - name: Upload binary to GitHub Release (macos)
+        if: runner.os == 'macOS'
+        run: |
+          VERSION="${{ needs.release-please.outputs.cli_version }}"
+          RAW_ARCH=$(uname -m)
+          case "$RAW_ARCH" in
+            x86_64) ARCH="x64" ;;
+            aarch64|arm64) ARCH="arm64" ;;
+            *) ARCH="$RAW_ARCH" ;;
+          esac
+          SRC="packages/cli/release/dnscmp-${VERSION}"
+          DEST="packages/cli/release/dnscmp-${VERSION}-darwin-${ARCH}"
+          mv "$SRC" "$DEST"
+          gh release upload "${{ needs.release-please.outputs.cli_tag_name }}" "$DEST"
 
       - name: Upload binary to GitHub Release (windows)
         if: runner.os == 'Windows'
         run: |
-          $binary = "packages/cli/release/dnscmp-${{ needs.release-please.outputs.cli_version }}.exe"
-          gh release upload "${{ needs.release-please.outputs.cli_tag_name }}" $binary
+          $version = "${{ needs.release-please.outputs.cli_version }}"
+          $rawArch = $env:PROCESSOR_ARCHITECTURE
+          $arch = switch ($rawArch) {
+            'AMD64' { 'x64' }
+            'ARM64' { 'arm64' }
+            default { $rawArch.ToLower() }
+          }
+          $src = "packages/cli/release/dnscmp-${version}.exe"
+          $dest = "packages/cli/release/dnscmp-${version}-win32-${arch}.exe"
+          Move-Item $src $dest
+          gh release upload "${{ needs.release-please.outputs.cli_tag_name }}" $dest
         shell: pwsh
