@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.0.5](https://github.com/oBusk/dnscmp/compare/dnscmp@v0.0.4...dnscmp@v0.0.5) (2026-04-09)
+
+
+### Bug Fixes
+
+* Republish ([054618c](https://github.com/oBusk/dnscmp/commit/054618c1e82306b0db11808d81d1bc933b3f0a4d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @dnscmp/core bumped to 0.0.3
+    * @dnscmp/providers bumped to 0.0.3
+    * @dnscmp/types bumped to 0.0.3
+
 ## [0.0.4](https://github.com/oBusk/dnscmp/compare/dnscmp@v0.0.3...dnscmp@v0.0.4) (2026-04-09)
 
 

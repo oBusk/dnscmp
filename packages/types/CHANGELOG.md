@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.3](https://github.com/oBusk/dnscmp/compare/@dnscmp/types@v0.0.2...@dnscmp/types@v0.0.3) (2026-04-09)
+
+
+### Bug Fixes
+
+* Republish ([054618c](https://github.com/oBusk/dnscmp/commit/054618c1e82306b0db11808d81d1bc933b3f0a4d))
+
 ## [0.0.2](https://github.com/oBusk/dnscmp/compare/@dnscmp/types@v0.0.1...@dnscmp/types@v0.0.2) (2026-04-09)
 
 
