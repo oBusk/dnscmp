@@ -3,7 +3,6 @@
   "release-type": "node",
   "include-component-in-tag": true,
   "tag-separator": "@",
-  "group-pull-request-title-pattern": "chore: release",
   "plugins": ["node-workspace"],
   "packages": {
     "packages/cli": {
