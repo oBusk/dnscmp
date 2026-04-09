@@ -1,5 +1,7 @@
 # @dnscmp/core
 
+[![NPM Version](https://img.shields.io/npm/v/@dnscmp/core)](https://npmx.dev/package/@dnscmp/core)
+
 Library for benchmarking and comparing DNS resolution times across DNS providers.
 
 ## Usage

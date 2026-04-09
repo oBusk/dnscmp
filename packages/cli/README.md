@@ -1,5 +1,7 @@
 # dnscmp
 
+[![NPM Version](https://img.shields.io/npm/v/dnscmp)](https://npmx.dev/package/dnscmp)
+
 Command-line tool for benchmarking and comparing DNS resolution times across DNS providers.
 
 ## Usage

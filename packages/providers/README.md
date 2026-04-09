@@ -1,5 +1,7 @@
 # @dnscmp/providers
 
+[![NPM Version](https://img.shields.io/npm/v/@dnscmp/providers)](https://npmx.dev/package/@dnscmp/providers)
+
 Curated list of public DNS providers for use with [`@dnscmp/core`](../core).
 
 ## Usage
