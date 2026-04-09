@@ -26,3 +26,81 @@ jobs:
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+  publish:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.releases_created }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Upgrade npm for OIDC trusted publishing support
+        run: npm install -g npm@latest
+
+      - name: Build and publish @dnscmp/core
+        if: ${{ needs.release-please.outputs.core_release_created }}
+        run: |
+          bun run --cwd packages/core build
+          bun pm pack --cwd packages/core
+          npm publish packages/core/*.tgz --provenance
+
+      - name: Build and publish @dnscmp/providers
+        if: ${{ needs.release-please.outputs.providers_release_created }}
+        run: |
+          bun run --cwd packages/providers build
+          bun pm pack --cwd packages/providers
+          npm publish packages/providers/*.tgz --provenance
+
+      - name: Publish @dnscmp/types
+        if: ${{ needs.release-please.outputs.types_release_created }}
+        run: |
+          bun pm pack --cwd packages/types
+          npm publish packages/types/*.tgz --provenance
+
+      - name: Build and publish dnscmp
+        if: ${{ needs.release-please.outputs.cli_release_created }}
+        run: |
+          bun run --cwd packages/cli build
+          bun pm pack --cwd packages/cli
+          npm publish packages/cli/*.tgz --provenance
+
+  build-binaries:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.cli_release_created }}
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build binary
+        run: bun run --cwd packages/cli build
+
+      - name: Upload binary to GitHub Release (unix)
+        if: runner.os != 'Windows'
+        run: |
+          BINARY="packages/cli/release/dnscmp-${{ needs.release-please.outputs.cli_version }}"
+          gh release upload "${{ needs.release-please.outputs.cli_tag_name }}" "$BINARY"
+
+      - name: Upload binary to GitHub Release (windows)
+        if: runner.os == 'Windows'
+        run: |
+          $binary = "packages/cli/release/dnscmp-${{ needs.release-please.outputs.cli_version }}.exe"
+          gh release upload "${{ needs.release-please.outputs.cli_tag_name }}" $binary
+        shell: pwsh
