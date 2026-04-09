@@ -1,9 +1,10 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "release-type": "node",
-  "separate-pull-requests": true,
   "include-component-in-tag": true,
   "tag-separator": "@",
+  "group-pull-request-title-pattern": "chore: release",
+  "plugins": ["node-workspace"],
   "packages": {
     "packages/cli": {
       "component": "dnscmp",
