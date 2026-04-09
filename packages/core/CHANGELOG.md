@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.4](https://github.com/oBusk/dnscmp/compare/@dnscmp/core@v0.0.3...@dnscmp/core@v0.0.4) (2026-04-09)
+
+
+### Bug Fixes
+
+* use workspace:~ for internal deps to publish tilde ranges ([60eff55](https://github.com/oBusk/dnscmp/commit/60eff55bfb700e850a073cce65a658420c8ea566))
+
 ## [0.0.3](https://github.com/oBusk/dnscmp/compare/@dnscmp/core@v0.0.2...@dnscmp/core@v0.0.3) (2026-04-09)
 
 
