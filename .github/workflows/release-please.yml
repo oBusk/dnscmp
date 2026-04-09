@@ -21,7 +21,7 @@ jobs:
       providers_release_created: ${{ steps.release.outputs['@dnscmp/providers--release_created'] }}
       types_release_created: ${{ steps.release.outputs['@dnscmp/types--release_created'] }}
     steps:
-      - uses: google-github-actions/release-please-action@v4
+      - uses: googleapis/release-please-action@v4.4.0
         id: release
         with:
           config-file: release-please-config.json
@@ -35,7 +35,7 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
@@ -80,7 +80,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
