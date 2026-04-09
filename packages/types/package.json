@@ -1,7 +1,7 @@
 {
   "name": "@dnscmp/types",
   "description": "Shared TypeScript types for dnscmp packages.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "exports": {
     ".": "./index.d.ts"
