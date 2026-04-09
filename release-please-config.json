@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "node",
+  "separate-pull-requests": true,
+  "include-component-in-tag": true,
+  "tag-separator": "@",
+  "packages": {
+    "packages/cli": {
+      "component": "dnscmp",
+      "changelog-path": "CHANGELOG.md"
+    },
+    "packages/core": {
+      "component": "@dnscmp/core",
+      "changelog-path": "CHANGELOG.md"
+    },
+    "packages/providers": {
+      "component": "@dnscmp/providers",
+      "changelog-path": "CHANGELOG.md"
+    },
+    "packages/types": {
+      "component": "@dnscmp/types",
+      "changelog-path": "CHANGELOG.md"
+    }
+  }
+}
