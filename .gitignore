@@ -6,6 +6,7 @@ out-tsc
 dist
 release
 *.tgz
+output.txt
 
 # code coverage
 coverage
