@@ -37,3 +37,6 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # Other local folder of other implementations to use as reference
 reference/
+
+# Claude Code local settings
+.claude/
