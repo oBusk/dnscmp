@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0](https://github.com/oBusk/dnscmp/compare/@dnscmp/core@v0.0.4...@dnscmp/core@v0.1.0) (2026-04-22)
+
+
+### Features
+
+* **cli:** live table UI, stream-aware styling, and structural refactor ([836aa53](https://github.com/oBusk/dnscmp/commit/836aa532a5cddf515879643f325be954a5451d1c))
+
 ## [0.0.4](https://github.com/oBusk/dnscmp/compare/@dnscmp/core@v0.0.3...@dnscmp/core@v0.0.4) (2026-04-09)
 
 
