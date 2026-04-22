@@ -12,6 +12,17 @@ export interface DnscmpOptions {
   providers: DnsProvider[];
   domains?: string[];
   tries?: number;
+  onResult?: (result: DnsResult) => void;
+}
+
+function compareResults<T extends { avg: number | null }>(
+  a: T,
+  b: T,
+): number {
+  if (a.avg === null && b.avg === null) return 0;
+  if (a.avg === null) return 1;
+  if (b.avg === null) return -1;
+  return a.avg - b.avg;
 }
 
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
@@ -67,12 +78,7 @@ async function measureProvider(
     })),
   );
 
-  resolverResults.sort((a, b) => {
-    if (a.avg === null && b.avg === null) return 0;
-    if (a.avg === null) return 1;
-    if (b.avg === null) return -1;
-    return a.avg - b.avg;
-  });
+  resolverResults.sort(compareResults);
 
   const best = resolverResults[0]!;
   return { name: provider.name, resolver: best.resolverIp, avg: best.avg };
@@ -83,17 +89,14 @@ export async function dnscmp(options: DnscmpOptions): Promise<DnsResult[]> {
   const tries = options.tries ?? DEFAULT_TRIES;
 
   const results = await Promise.all(
-    options.providers.map((provider) =>
-      measureProvider(provider, domains, tries),
-    ),
+    options.providers.map(async (provider) => {
+      const result = await measureProvider(provider, domains, tries);
+      options.onResult?.(result);
+      return result;
+    }),
   );
 
-  results.sort((a, b) => {
-    if (a.avg === null && b.avg === null) return 0;
-    if (a.avg === null) return 1;
-    if (b.avg === null) return -1;
-    return a.avg - b.avg;
-  });
+  results.sort(compareResults);
 
   return results;
 }

@@ -1,6 +1,26 @@
 import { dnscmp } from "@dnscmp/core";
 import type { DnsProvider } from "@dnscmp/types";
 import { parseArgs } from "node:util";
+import { createSupportsColor } from "supports-color";
+import { createSupportsHyperlinks } from "supports-hyperlinks";
+import { printHelp } from "./help.ts";
+import { isOwnedConsole } from "./is-owned-console.ts";
+import { LiveTable } from "./live-table.ts";
+import { buildLogo } from "./logo.ts";
+import type { OutputStream } from "./output-stream.ts";
+
+function makeOutputStream(stream: NodeJS.WriteStream): OutputStream {
+  return {
+    stream,
+    supportsColor: !!createSupportsColor(stream),
+    supportsHyperlinks:
+      createSupportsHyperlinks(stream) ||
+      process.env.TERM_PROGRAM === "vscode",
+  };
+}
+
+const out = makeOutputStream(process.stdout);
+const err = makeOutputStream(process.stderr);
 
 const { values, positionals } = parseArgs({
   args: process.argv.slice(2),
@@ -13,24 +33,11 @@ const { values, positionals } = parseArgs({
 });
 
 if (values.help) {
-  process.stdout.write(
-    [
-      "Usage: dnscmp [options] [resolver...]",
-      "",
-      "  dnscmp                       Test default providers",
-      "  dnscmp 1.1.1.1 8.8.8.8       Test specific resolvers",
-      "  dnscmp -f resolvers.txt      Test resolvers from a file",
-      "  dnscmp --defaults 9.9.9.9    Test default providers plus extra resolver(s)",
-      "",
-      "Options:",
-      "  -d, --defaults  Include default providers alongside explicit input",
-      "  -f, --file      Path to file with one resolver IP per line (optional name after whitespace)",
-      "  -h, --help      Show this help message",
-      "",
-    ].join("\n"),
-  );
+  printHelp(err);
   process.exit(0);
 }
+
+err.stream.write(buildLogo(err) + "\n");
 
 const hasExplicitInput = positionals.length > 0 || values.file != null;
 
@@ -50,10 +57,20 @@ for (const ip of positionals) {
   input.push({ name: ip, resolvers: [ip] });
 }
 
-const results = await dnscmp({ providers: input });
-for (const { name, resolver, avg } of results) {
-  const value = avg === null ? "failed" : `${avg.toFixed(2)}ms`;
-  const label = name === resolver ? name : `${name} (${resolver})`;
-  process.stdout.write(`${label}: ${value}\n`);
+const table = new LiveTable(input, out, err);
+table.start();
+
+await dnscmp({
+  providers: input,
+  onResult: (result) => table.update(result),
+});
+
+table.stop();
+
+if (process.stdin.isTTY && isOwnedConsole()) {
+  process.stdout.write("\nPress any key to exit...");
+  process.stdin.setRawMode(true);
+  process.stdin.resume();
+  await new Promise<void>((resolve) => process.stdin.once("data", resolve));
+  process.stdout.write("\n");
 }
-process.exit(0);
