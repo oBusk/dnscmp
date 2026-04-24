@@ -67,7 +67,7 @@ jobs:
       - name: Build and publish dnscmp
         if: ${{ needs.release-please.outputs.cli_release_created }}
         run: |
-          bun run --cwd packages/cli build
+          bun run --cwd packages/cli build:node
           bun pm pack --cwd packages/cli
           bunx npm@latest publish packages/cli/*.tgz --provenance
 
@@ -90,7 +90,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Build binary
-        run: bun run --cwd packages/cli build
+        run: bun run --cwd packages/cli build:binary
 
       - name: Upload binary to GitHub Release (linux)
         if: runner.os == 'Linux'

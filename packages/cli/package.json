@@ -21,7 +21,9 @@
   "license": "MIT",
   "author": "Oscar Busk (https://github.com/oBusk)",
   "scripts": {
-    "build": "bun run build.ts",
+    "build": "bun run build:node && bun run build:binary",
+    "build:node": "bun run build-node.ts",
+    "build:binary": "bun run build-binary.ts",
     "start": "bun run src/index.ts"
   },
   "engines": {
