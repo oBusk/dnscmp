@@ -5,6 +5,6 @@ await Bun.build({
   banner: "#!/usr/bin/env node",
   external: ["@dnscmp/core", "@dnscmp/providers"],
   define: {
-    __DNSCMP_WIN32__: "false",
+    __DNSCMP_WIN32_BUILD__: "false",
   },
 });

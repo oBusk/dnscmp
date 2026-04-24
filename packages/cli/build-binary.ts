@@ -13,6 +13,6 @@ await Bun.build({
     },
   },
   define: {
-    __DNSCMP_WIN32__: String(process.platform === "win32"),
+    __DNSCMP_WIN32_BUILD__: String(process.platform === "win32"),
   },
 });

@@ -8,7 +8,7 @@ import { LiveTable } from "./live-table.ts";
 import { buildLogo } from "./logo.ts";
 import type { OutputStream } from "./output-stream.ts";
 
-declare const __DNSCMP_WIN32__: boolean | undefined;
+declare const __DNSCMP_WIN32_BUILD__: boolean | undefined;
 
 function makeOutputStream(stream: NodeJS.WriteStream): OutputStream {
   return {
@@ -68,16 +68,16 @@ await dnscmp({
 
 table.stop();
 
-// Built bundles replace `__DNSCMP_WIN32__` with a literal `true`/`false` via
-// Bun's `define`, letting the bundler DCE this whole block (and tree-shake
-// `is-owned-console.ts` + its `bun:ffi` import) when it folds to `false`.
-// When running the TS source directly (e.g. `bun start`) the identifier is
-// undeclared, and `typeof` is the only safe probe under ESM strict mode —
-// so we fall back to a runtime platform check.
+// True only in bundles produced by `build:binary` on Windows. The build
+// scripts replace `__DNSCMP_WIN32_BUILD__` with a literal `true`/`false` via
+// Bun's `define`, so this folds to `if (false && ...)` everywhere else and
+// the bundler DCEs the block (and tree-shakes `is-owned-console.ts` + its
+// `bun:ffi` import). When running the TS source directly (`bun start`) the
+// identifier is undeclared; `typeof` is the only safe probe under ESM strict
+// mode, and we deliberately don't show the prompt during dev iteration.
 if (
-  (typeof __DNSCMP_WIN32__ === "boolean"
-    ? __DNSCMP_WIN32__
-    : process.platform === "win32") &&
+  typeof __DNSCMP_WIN32_BUILD__ === "boolean" &&
+  __DNSCMP_WIN32_BUILD__ &&
   process.stdin.isTTY
 ) {
   const { isOwnedConsole } = await import("./is-owned-console.ts");
