@@ -6,7 +6,7 @@
       "name": "@dnscmp/repo",
       "peerDependencies": {
         "@types/bun": "latest",
-        "typescript": "^5",
+        "typescript": "^5.9.3",
       },
     },
     "packages/cli": {
