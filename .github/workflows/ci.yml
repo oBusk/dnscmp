@@ -49,7 +49,7 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         runtime:
           - { label: node-22, kind: node, version: "22.13.0", cmd: node }
-          - { label: node-latest, kind: node, version: "24", cmd: node }
+          - { label: node-lts, kind: node, version: "lts/*", cmd: node }
           - { label: bun, kind: bun, version: latest, cmd: bun }
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
