@@ -8,7 +8,7 @@ import { LiveTable } from "./live-table.ts";
 import { buildLogo } from "./logo.ts";
 import type { OutputStream } from "./output-stream.ts";
 
-declare const __DNSCMP_WIN32__: boolean;
+declare const __DNSCMP_WIN32__: boolean | undefined;
 
 function makeOutputStream(stream: NodeJS.WriteStream): OutputStream {
   return {
@@ -68,7 +68,18 @@ await dnscmp({
 
 table.stop();
 
-if (__DNSCMP_WIN32__ && process.stdin.isTTY) {
+// Built bundles replace `__DNSCMP_WIN32__` with a literal `true`/`false` via
+// Bun's `define`, letting the bundler DCE this whole block (and tree-shake
+// `is-owned-console.ts` + its `bun:ffi` import) when it folds to `false`.
+// When running the TS source directly (e.g. `bun start`) the identifier is
+// undeclared, and `typeof` is the only safe probe under ESM strict mode —
+// so we fall back to a runtime platform check.
+if (
+  (typeof __DNSCMP_WIN32__ === "boolean"
+    ? __DNSCMP_WIN32__
+    : process.platform === "win32") &&
+  process.stdin.isTTY
+) {
   const { isOwnedConsole } = await import("./is-owned-console.ts");
   if (isOwnedConsole()) {
     process.stdout.write("\nPress any key to exit...");
