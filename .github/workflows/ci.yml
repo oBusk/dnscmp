@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+
+  artifact-shape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - name: Verify published artifact shape
+        run: |
+          test -f packages/core/dist/index.js
+          test -f packages/providers/dist/index.js
+          test -f packages/cli/dist/index.js
+          head -n1 packages/cli/dist/index.js | grep -qx '#!/usr/bin/env node'
+
+  cli-runtime:
+    name: cli-runtime (${{ matrix.runtime.label }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        runtime:
+          - { label: node-22, kind: node, version: "22.13.0", cmd: node }
+          - { label: node-latest, kind: node, version: "24", cmd: node }
+          - { label: bun, kind: bun, version: latest, cmd: bun }
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      - if: matrix.runtime.kind == 'node'
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: ${{ matrix.runtime.version }}
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - name: Smoke test --help
+        run: ${{ matrix.runtime.cmd }} packages/cli/dist/index.js --help
+      - name: Smoke test live query
+        run: ${{ matrix.runtime.cmd }} packages/cli/dist/index.js 1.1.1.1
