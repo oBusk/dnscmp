@@ -4,10 +4,11 @@ import { parseArgs } from "node:util";
 import { createSupportsColor } from "supports-color";
 import { createSupportsHyperlinks } from "supports-hyperlinks";
 import { printHelp } from "./help.ts";
-import { isOwnedConsole } from "./is-owned-console.ts";
 import { LiveTable } from "./live-table.ts";
 import { buildLogo } from "./logo.ts";
 import type { OutputStream } from "./output-stream.ts";
+
+declare const __DNSCMP_WIN32__: boolean;
 
 function makeOutputStream(stream: NodeJS.WriteStream): OutputStream {
   return {
@@ -67,10 +68,13 @@ await dnscmp({
 
 table.stop();
 
-if (process.stdin.isTTY && isOwnedConsole()) {
-  process.stdout.write("\nPress any key to exit...");
-  process.stdin.setRawMode(true);
-  process.stdin.resume();
-  await new Promise<void>((resolve) => process.stdin.once("data", resolve));
-  process.stdout.write("\n");
+if (__DNSCMP_WIN32__ && process.stdin.isTTY) {
+  const { isOwnedConsole } = await import("./is-owned-console.ts");
+  if (isOwnedConsole()) {
+    process.stdout.write("\nPress any key to exit...");
+    process.stdin.setRawMode(true);
+    process.stdin.resume();
+    await new Promise<void>((resolve) => process.stdin.once("data", resolve));
+    process.stdout.write("\n");
+  }
 }
