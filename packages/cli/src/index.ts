@@ -68,13 +68,8 @@ await dnscmp({
 
 table.stop();
 
-// True only in bundles produced by `build:binary` on Windows. The build
-// scripts replace `__DNSCMP_WIN32_BUILD__` with a literal `true`/`false` via
-// Bun's `define`, so this folds to `if (false && ...)` everywhere else and
-// the bundler DCEs the block (and tree-shakes `is-owned-console.ts` + its
-// `bun:ffi` import). When running the TS source directly (`bun start`) the
-// identifier is undeclared; `typeof` is the only safe probe under ESM strict
-// mode, and we deliberately don't show the prompt during dev iteration.
+// Using var defined at build time, we check if currently executing as a windows binary
+// This code should be tree-shaken in any other build.
 if (
   typeof __DNSCMP_WIN32_BUILD__ === "boolean" &&
   __DNSCMP_WIN32_BUILD__ &&
