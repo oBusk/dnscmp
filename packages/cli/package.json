@@ -1,7 +1,7 @@
 {
   "name": "dnscmp",
   "description": "Command-line tool for benchmarking and comparing DNS resolution times across DNS providers.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "bin": {
     "dnscmp": "dist/index.js"
