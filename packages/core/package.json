@@ -1,7 +1,7 @@
 {
   "name": "@dnscmp/core",
   "description": "Library for benchmarking and comparing DNS resolution times across DNS providers.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "exports": {
     ".": {
