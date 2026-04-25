@@ -1,5 +1,7 @@
 import type { DnsProvider, DnsResult } from "@dnscmp/types";
-import { Resolver } from "dns/promises";
+import { createSocket, type Socket } from "node:dgram";
+import { isIPv6 } from "node:net";
+import { encode, RECURSION_DESIRED } from "dns-packet";
 
 export type { DnsProvider, DnsResult };
 
@@ -7,6 +9,7 @@ const DEFAULT_DOMAINS = ["example.com", "example.org", "example.net"];
 const DEFAULT_TRIES = 10;
 const QUERY_TIMEOUT_MS = 1000;
 const MAX_CONSECUTIVE_FAILURES = 3;
+const DNS_PORT = 53;
 
 export interface DnscmpOptions {
   providers: DnsProvider[];
@@ -25,13 +28,69 @@ function compareResults<T extends { avg: number | null }>(
   return a.avg - b.avg;
 }
 
-function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
-  return Promise.race([
-    promise,
-    new Promise<T>((_, reject) =>
-      setTimeout(() => reject(new Error("ETIMEOUT")), ms),
-    ),
-  ]);
+function bindSocket(socket: Socket): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const onError = (err: Error) => {
+      socket.off("listening", onListening);
+      reject(err);
+    };
+    const onListening = () => {
+      socket.off("error", onError);
+      resolve();
+    };
+    socket.once("listening", onListening);
+    socket.once("error", onError);
+    socket.bind(0);
+  });
+}
+
+function queryOnce(
+  socket: Socket,
+  resolverIp: string,
+  query: Buffer,
+  expectedId: number,
+): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const onMessage = (msg: Buffer) => {
+      const t1 = performance.now();
+      // Validate id AFTER timing capture so a stray late packet from a
+      // previously timed-out query is ignored without affecting timing.
+      if (msg.length < 2 || msg.readUInt16BE(0) !== expectedId) return;
+      cleanup();
+      resolve(t1 - t0);
+    };
+    const onError = (err: Error) => {
+      cleanup();
+      reject(err);
+    };
+    const timer = setTimeout(() => {
+      cleanup();
+      reject(new Error("ETIMEOUT"));
+    }, QUERY_TIMEOUT_MS);
+    const cleanup = () => {
+      clearTimeout(timer);
+      socket.off("message", onMessage);
+      socket.off("error", onError);
+    };
+    socket.on("message", onMessage);
+    socket.once("error", onError);
+    const t0 = performance.now();
+    socket.send(query, DNS_PORT, resolverIp, (err) => {
+      if (err) {
+        cleanup();
+        reject(err);
+      }
+    });
+  });
+}
+
+function buildQuery(domain: string, id: number): Buffer {
+  return encode({
+    type: "query",
+    id,
+    flags: RECURSION_DESIRED,
+    questions: [{ type: "A", name: domain }],
+  });
 }
 
 async function measureAvg(
@@ -39,31 +98,52 @@ async function measureAvg(
   domains: string[],
   tries: number,
 ): Promise<number | null> {
-  const resolver = new Resolver();
-  resolver.setServers([resolverIp]);
+  const socket = createSocket(isIPv6(resolverIp) ? "udp6" : "udp4");
+  try {
+    await bindSocket(socket);
 
-  let total = 0;
-  let count = 0;
-  let consecutiveFailures = 0;
+    let id = (Math.random() * 0x10000) | 0;
+    const nextId = () => (id = (id + 1) & 0xffff);
 
-  for (let i = 0; i < tries; i++) {
+    // Warmup: one untimed query per domain so the timed loop measures
+    // warm-path RTT (resolver cache, NAT state, route). Failures are
+    // ignored — the timed loop's failure accounting catches genuine
+    // unreachability.
     for (const domain of domains) {
+      const qid = nextId();
       try {
-        const start = performance.now();
-        await withTimeout(resolver.resolve4(domain), QUERY_TIMEOUT_MS);
-        total += performance.now() - start;
-        count++;
-        consecutiveFailures = 0;
+        await queryOnce(socket, resolverIp, buildQuery(domain, qid), qid);
       } catch {
-        consecutiveFailures++;
-        if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
-          return null;
+        // ignore
+      }
+    }
+
+    let total = 0;
+    let count = 0;
+    let consecutiveFailures = 0;
+
+    for (let i = 0; i < tries; i++) {
+      for (const domain of domains) {
+        const qid = nextId();
+        const query = buildQuery(domain, qid);
+        try {
+          const ms = await queryOnce(socket, resolverIp, query, qid);
+          total += ms;
+          count++;
+          consecutiveFailures = 0;
+        } catch {
+          consecutiveFailures++;
+          if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
+            return null;
+          }
         }
       }
     }
-  }
 
-  return count > 0 ? total / count : null;
+    return count > 0 ? total / count : null;
+  } finally {
+    socket.close();
+  }
 }
 
 async function measureProvider(
