@@ -1,21 +1,14 @@
-import { dlopen, FFIType, ptr } from "bun:ffi";
+import koffi from "koffi";
 
-/**
- * Returns true if this process owns the console window (i.e. was launched by
- * double-clicking the exe rather than from an existing terminal). On non-Windows
- * platforms this always returns false.
- */
 export function isOwnedConsole(): boolean {
   if (process.platform !== "win32") return false;
   try {
-    const { symbols } = dlopen("kernel32.dll", {
-      GetConsoleProcessList: {
-        args: [FFIType.ptr, FFIType.u32],
-        returns: FFIType.u32,
-      },
-    });
+    const kernel32 = koffi.load("kernel32.dll");
+    const GetConsoleProcessList = kernel32.func(
+      "uint32_t GetConsoleProcessList(uint32_t *, uint32_t)",
+    );
     const buf = new Uint32Array(64);
-    const count = symbols.GetConsoleProcessList(ptr(buf), 64);
+    const count = GetConsoleProcessList(buf, 64);
     return count === 1;
   } catch {
     return false;

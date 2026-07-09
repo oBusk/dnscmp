@@ -3,7 +3,12 @@
   "compilerOptions": {
     "composite": true,
     "rootDir": "src",
-    "outDir": "../../out-tsc/cli"
+    "outDir": "dist",
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [
+    { "path": "../core" },
+    { "path": "../providers" }
+  ]
 }

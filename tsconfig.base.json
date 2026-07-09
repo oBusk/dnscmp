@@ -11,7 +11,7 @@
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
-    "customConditions": ["bun"],
+
     "isolatedModules": true,
     "isolatedDeclarations": true,
     "declaration": true,

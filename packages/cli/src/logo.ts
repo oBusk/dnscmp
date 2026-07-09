@@ -1,6 +1,10 @@
-import { version } from "../package.json";
+import { createRequire } from "node:module";
 import type { OutputStream } from "./output-stream.ts";
 import { style } from "./style.ts";
+
+const { version } = createRequire(import.meta.url)("../package.json") as {
+  version: string;
+};
 
 const COLOR_SPLIT_COLUMN = 18;
 const LOGO_BLOCK = `

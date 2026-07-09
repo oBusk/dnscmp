@@ -14,14 +14,14 @@ A small toolkit for benchmarking and comparing DNS resolution times, with a CLI 
 ## Development
 
 ```bash
-bun install
-bun start
+pnpm install
+pnpm start
 ```
 
 ## Scripts
 
 | Script | Description |
 | --- | --- |
-| `bun start` | Run the CLI directly from source (no build needed) |
-| `bun run build` | Build all packages for publishing |
-| `bun run typecheck` | Type-check the full project via tsc project references |
+| `pnpm start` | Run the CLI directly from source (no build needed) |
+| `pnpm run build` | Build all packages for publishing |
+| `pnpm run typecheck` | Type-check the full project via tsc project references |
