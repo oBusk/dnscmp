@@ -1,13 +1,19 @@
 import { build } from "esbuild";
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
-import { createRequire } from "node:module";
+import pkg from "./package.json" with { type: "json" };
 
-const require = createRequire(import.meta.url);
-const pkg = require("./package.json");
 const version = pkg.version;
 const isWin = process.platform === "win32";
 const ext = isWin ? ".exe" : "";
+
+const [major, minor] = process.versions.node.split(".").map(Number);
+if (major < 25 || (major === 25 && minor < 5)) {
+  console.error(
+    `node --build-sea requires Node.js >=25.5.0, but this is running under Node.js ${process.versions.node}.`,
+  );
+  process.exit(1);
+}
 
 mkdirSync("release", { recursive: true });
 
@@ -35,10 +41,12 @@ writeFileSync(
   }),
 );
 
-execSync("node --build-sea release/sea-config.json", { stdio: "inherit" });
+execFileSync(process.execPath, ["--build-sea", "release/sea-config.json"], {
+  stdio: "inherit",
+});
 
 if (process.platform === "darwin") {
-  execSync(`codesign --sign - "${outfile}"`);
+  execFileSync("codesign", ["--sign", "-", outfile]);
 }
 
 console.log(`Built: ${outfile}`);
