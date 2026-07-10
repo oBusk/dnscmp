@@ -52,8 +52,12 @@ jobs:
           head -n1 packages/cli/dist/index.js | grep -qx '#!/usr/bin/env node'
 
   cli-runtime:
-    name: cli-runtime
+    name: cli-runtime (node ${{ matrix.node }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["22.13.0", "lts/*"]
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
@@ -65,7 +69,25 @@ jobs:
           run_install: true
           cache: true
 
+      # Temporary verification: build must run under the devEngines-managed
+      # Node regardless of the runner's system Node. Remove once confirmed.
+      - name: Verify build Node version (temporary)
+        run: |
+          echo "pnpm-managed node: $(pnpm exec node -v)"
+          echo "system node: $(node -v)"
+
+      # Builds with the devEngines-managed Node (pnpm runtime management),
+      # independent of the matrix Node version below.
       - run: pnpm run build
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: ${{ matrix.node }}
+
+      # Temporary verification: smoke steps must run under the matrix Node.
+      # Remove once confirmed.
+      - name: Verify smoke Node version (temporary)
+        run: node -v
 
       - name: Smoke test --help
         run: node packages/cli/dist/index.js --help
