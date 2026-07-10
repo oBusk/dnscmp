@@ -33,7 +33,6 @@
     "@dnscmp/core": "workspace:~",
     "@dnscmp/providers": "workspace:~",
     "@dnscmp/types": "workspace:~",
-    "koffi": "^2",
     "log-update": "^6.1.0",
     "supports-color": "^10.2.2",
     "supports-hyperlinks": "^4.4.0"

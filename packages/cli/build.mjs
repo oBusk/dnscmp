@@ -1,8 +1,14 @@
-import { execSync } from "node:child_process";
-import { readFileSync, writeFileSync } from "node:fs";
+import { build } from "esbuild";
 
-execSync("tsc --project tsconfig.build.json", { stdio: "inherit" });
-
-const file = "dist/index.js";
-const content = readFileSync(file, "utf8");
-writeFileSync(file, "#!/usr/bin/env node\n" + content);
+await build({
+  entryPoints: ["src/index.ts"],
+  bundle: true,
+  platform: "node",
+  format: "esm",
+  outfile: "dist/index.js",
+  banner: { js: "#!/usr/bin/env node" },
+  external: ["@dnscmp/core", "@dnscmp/providers"],
+  define: {
+    __DNSCMP_WIN32_BUILD__: "false",
+  },
+});

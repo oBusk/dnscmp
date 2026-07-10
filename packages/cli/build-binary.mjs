@@ -17,7 +17,6 @@ await build({
   platform: "node",
   format: "esm",
   outfile: "release/sea-prep.js",
-  external: ["koffi"],
   define: {
     __DNSCMP_WIN32_BUILD__: String(isWin),
   },
