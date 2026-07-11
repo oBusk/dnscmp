@@ -28,5 +28,5 @@ Results are sorted fastest-first. Providers with multiple IPs are all tested; on
 ## Build
 
 ```bash
-bun run build
+pnpm run build
 ```
