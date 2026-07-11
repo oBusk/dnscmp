@@ -14,8 +14,9 @@
     "start": "node packages/cli/src/index.ts",
     "typecheck": "tsc --build"
   },
-  "devDependencies": {
+  "peerDependencies": {
     "@types/node": "^26.1.0",
     "typescript": "^5.9.3"
-  }
+  },
+  "devDependencies": {}
 }

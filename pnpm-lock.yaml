@@ -31,16 +31,17 @@ pnpmfileChecksum: sha256-VgV5BeAIMVSrChSZaPhTX6DuJmY2/Mku0o27nCIPZvc=
 importers:
 
   .:
-    devDependencies:
+    dependencies:
       '@types/node':
         specifier: ^26.1.0
         version: 26.1.0
-      node:
-        specifier: runtime:25.9.0
-        version: runtime:25.9.0
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+    devDependencies:
+      node:
+        specifier: runtime:25.9.0
+        version: runtime:25.9.0
 
   packages/cli:
     dependencies:
