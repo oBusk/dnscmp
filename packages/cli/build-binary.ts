@@ -7,7 +7,7 @@ const version = pkg.version;
 const isWin = process.platform === "win32";
 const ext = isWin ? ".exe" : "";
 
-const [major, minor] = process.versions.node.split(".").map(Number);
+const [major = 0, minor = 0] = process.versions.node.split(".").map(Number);
 if (major < 25 || (major === 25 && minor < 5)) {
   console.error(
     `node --build-sea requires Node.js >=25.5.0, but this is running under Node.js ${process.versions.node}.`,
