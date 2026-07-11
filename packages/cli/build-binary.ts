@@ -17,6 +17,7 @@ if (major < 25 || (major === 25 && minor < 5)) {
 
 mkdirSync("release", { recursive: true });
 
+// 1. Use esbuild to bundle all js (including libs) to single file.
 await build({
   entryPoints: ["src/index.ts"],
   bundle: true,
@@ -28,8 +29,8 @@ await build({
   },
 });
 
+// 2. Create sea config as file
 const outfile = `release/dnscmp-${version}${ext}`;
-
 writeFileSync(
   "release/sea-config.json",
   JSON.stringify({
@@ -41,6 +42,7 @@ writeFileSync(
   }),
 );
 
+// 3. Build the SEA using the config (2.) which points to the bundle (1.)
 execFileSync(process.execPath, ["--build-sea", "release/sea-config.json"], {
   stdio: "inherit",
 });
