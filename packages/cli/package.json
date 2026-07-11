@@ -35,12 +35,12 @@
     "@dnscmp/core": "workspace:~",
     "@dnscmp/providers": "workspace:~",
     "@dnscmp/types": "workspace:~",
-    "log-update": "^6.1.0",
+    "log-update": "^8.0.0",
     "supports-color": "^10.2.2",
     "supports-hyperlinks": "^4.4.0"
   },
   "devDependencies": {
-    "esbuild": "^0.25",
-    "typescript": "^5"
+    "esbuild": "~0.28",
+    "typescript": "^6"
   }
 }

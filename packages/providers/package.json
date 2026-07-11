@@ -30,6 +30,6 @@
     "@dnscmp/types": "workspace:~"
   },
   "devDependencies": {
-    "typescript": "^5"
+    "typescript": "^6"
   }
 }
