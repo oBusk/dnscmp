@@ -52,12 +52,24 @@ jobs:
           head -n1 packages/cli/dist/index.js | grep -qx '#!/usr/bin/env node'
 
   cli-runtime:
-    name: cli-runtime (node ${{ matrix.node }})
+    name: cli-runtime (${{ matrix.runtime.label }})
     runs-on: ubuntu-latest
+    # Deno's node-compat layer is untested for this CLI; keep it informational
+    # until it has proven stable.
+    continue-on-error: ${{ matrix.runtime.experimental || false }}
     strategy:
       fail-fast: false
       matrix:
-        node: ["22.13.0", "lts/*"]
+        runtime:
+          - { label: node-22, kind: node, version: "22.13.0", cmd: node }
+          - { label: node-lts, kind: node, version: lts/*, cmd: node }
+          - { label: bun, kind: bun, cmd: bun }
+          - {
+              label: deno,
+              kind: deno,
+              cmd: deno run --allow-all,
+              experimental: true,
+            }
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
@@ -70,17 +82,22 @@ jobs:
           cache: true
 
       # Builds with the devEngines-managed Node (pnpm runtime management),
-      # independent of the matrix Node version below.
+      # independent of the matrix runtime below.
       - run: pnpm run build
 
-      # Puts the matrix Node on PATH so the bare-node smoke steps below
-      # exercise the engines range of the published CLI.
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+      # Puts the matrix runtime on PATH so the smoke steps below exercise
+      # the engines range of the published CLI.
+      - if: matrix.runtime.kind == 'node'
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
-          node-version: ${{ matrix.node }}
+          node-version: ${{ matrix.runtime.version }}
+      - if: matrix.runtime.kind == 'bun'
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      - if: matrix.runtime.kind == 'deno'
+        uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
 
       - name: Smoke test --help
-        run: node packages/cli/dist/index.js --help
+        run: ${{ matrix.runtime.cmd }} packages/cli/dist/index.js --help
 
       - name: Smoke test live query
-        run: node packages/cli/dist/index.js 1.1.1.1
+        run: ${{ matrix.runtime.cmd }} packages/cli/dist/index.js 1.1.1.1

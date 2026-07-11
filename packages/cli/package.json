@@ -24,10 +24,12 @@
     "build": "node build.mjs",
     "build:node": "node build.mjs",
     "build:binary": "node build-binary.mjs",
-    "start": "tsx src/index.ts"
+    "start": "node src/index.ts"
   },
   "engines": {
-    "node": "^22.13.0 || >=24.0.0"
+    "node": "^22.13.0 || >=24.0.0",
+    "bun": ">=1.1.0",
+    "deno": ">=2.0.0"
   },
   "dependencies": {
     "@dnscmp/core": "workspace:~",
