@@ -21,8 +21,8 @@
   "license": "MIT",
   "author": "Oscar Busk (https://github.com/oBusk)",
   "scripts": {
-    "build": "node build.ts",
-    "build:node": "node build.ts",
+    "build": "node build-npm.ts && node build-binary.ts",
+    "build:npm": "node build-npm.ts",
     "build:binary": "node build-binary.ts",
     "start": "node src/index.ts"
   },

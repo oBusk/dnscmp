@@ -6,7 +6,7 @@
     "outDir": "../../out-tsc/cli",
     "tsBuildInfoFile": "../../out-tsc/cli/tsconfig.tsbuildinfo"
   },
-  "include": ["src", "build.ts", "build-binary.ts", "package.json"],
+  "include": ["src", "build-npm.ts", "build-binary.ts", "package.json"],
   "references": [
     { "path": "../core" },
     { "path": "../providers" }
