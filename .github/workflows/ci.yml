@@ -62,8 +62,9 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         runtime:
-          - { label: node-22, kind: node, version: "22.13.0", cmd: node }
-          - { label: node-lts, kind: node, version: lts/*, cmd: node }
+          - { label: node-22, kind: node, version: "22.23.1", cmd: node }
+          - { label: node-24, kind: node, version: "24.18.0", cmd: node }
+          - { label: node-current, kind: node, version: "current", cmd: node }
           - { label: bun, kind: bun, cmd: bun }
           - {
               label: deno,
