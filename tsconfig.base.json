@@ -11,7 +11,11 @@
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
-    "customConditions": ["bun"],
+    "resolveJsonModule": true,
+
+    // Source must stay runnable via Node's native type stripping
+    // (node src/index.ts), which erases types but never transforms syntax.
+    "erasableSyntaxOnly": true,
     "isolatedModules": true,
     "isolatedDeclarations": true,
     "declaration": true,

@@ -5,14 +5,12 @@
   "type": "module",
   "exports": {
     ".": {
-      "bun": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     }
   },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "homepage": "https://github.com/oBusk/dnscmp#readme",
   "bugs": {
@@ -26,15 +24,12 @@
   "license": "MIT",
   "author": "Oscar Busk (https://github.com/oBusk)",
   "scripts": {
-    "build": "bun run build.ts"
+    "build": "tsc --project tsconfig.build.json"
   },
   "dependencies": {
     "@dnscmp/types": "workspace:~"
   },
   "devDependencies": {
-    "@types/bun": "latest",
-    "bun-plugin-isolated-decl": "^0.2",
-    "oxc-transform": "~0.123",
     "typescript": "^5"
   }
 }

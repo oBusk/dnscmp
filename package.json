@@ -1,16 +1,22 @@
 {
   "name": "@dnscmp/repo",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "25.9.0",
+      "onFail": "download"
+    }
+  },
+  "packageManager": "pnpm@11.11.0",
   "scripts": {
-    "build": "bun run --filter '@dnscmp/core' build && bun run --filter '@dnscmp/providers' build && bun run --filter 'dnscmp' build",
-    "start": "bun run --cwd packages/cli src/index.ts",
+    "build": "pnpm --filter @dnscmp/core build && pnpm --filter @dnscmp/providers build && pnpm --filter dnscmp build",
+    "start": "node packages/cli/src/index.ts",
     "typecheck": "tsc --build"
   },
   "peerDependencies": {
-    "@types/bun": "latest",
+    "@types/node": "^26.1.0",
     "typescript": "^5.9.3"
-  }
+  },
+  "devDependencies": {}
 }

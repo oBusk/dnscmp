@@ -32,5 +32,5 @@ const results = await dnscmp({ providers });
 ## Build
 
 ```bash
-bun run build
+pnpm run build
 ```

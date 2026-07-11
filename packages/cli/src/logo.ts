@@ -1,6 +1,8 @@
-import { version } from "../package.json";
+import pkg from "../package.json" with { type: "json" };
 import type { OutputStream } from "./output-stream.ts";
 import { style } from "./style.ts";
+
+const { version } = pkg;
 
 const COLOR_SPLIT_COLUMN = 18;
 const LOGO_BLOCK = `

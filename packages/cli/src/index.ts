@@ -75,13 +75,19 @@ if (
   __DNSCMP_WIN32_BUILD__ &&
   process.stdin.isTTY
 ) {
-  const { isOwnedConsole } = await import("./is-owned-console.ts");
-  if (isOwnedConsole()) {
-    process.stdout.write("\nPress any key to exit...");
-    process.stdin.setRawMode(true);
-    process.stdin.resume();
-    await new Promise<void>((resolve) => process.stdin.once("data", resolve));
-    process.stdout.write("\n");
+  try {
+    const { isOwnedConsole } = await import("./is-owned-console.ts");
+    if (isOwnedConsole()) {
+      process.stdout.write("\nPress any key to exit...");
+      process.stdin.setRawMode(true);
+      process.stdin.resume();
+      await new Promise<void>((resolve) =>
+        process.stdin.once("data", resolve),
+      );
+      process.stdout.write("\n");
+    }
+  } catch {
+    // Fail safe: never let double-click detection prevent a clean exit.
   }
 }
 

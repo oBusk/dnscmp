@@ -1,0 +1,6 @@
+packages:
+  - "packages/*"
+allowBuilds:
+  esbuild: true
+configDependencies:
+  '@obusk/pnpm-plugin-defaults': 0.6.0

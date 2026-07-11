@@ -25,5 +25,5 @@ npx dnscmp --help                 # show all options
 ## Development
 
 ```bash
-bun run start
+pnpm run start
 ```

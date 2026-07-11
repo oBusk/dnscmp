@@ -21,14 +21,15 @@
   "license": "MIT",
   "author": "Oscar Busk (https://github.com/oBusk)",
   "scripts": {
-    "build": "bun run build:node && bun run build:binary",
-    "build:node": "bun run build-node.ts",
-    "build:binary": "bun run build-binary.ts",
-    "start": "bun run src/index.ts"
+    "build": "node build-npm.ts && node build-binary.ts",
+    "build:npm": "node build-npm.ts",
+    "build:binary": "node build-binary.ts",
+    "start": "node src/index.ts"
   },
   "engines": {
     "node": "^22.13.0 || >=24.0.0",
-    "bun": ">=1.1.0"
+    "bun": ">=1.1.0",
+    "deno": ">=2.0.0"
   },
   "dependencies": {
     "@dnscmp/core": "workspace:~",
@@ -39,7 +40,7 @@
     "supports-hyperlinks": "^4.4.0"
   },
   "devDependencies": {
-    "@types/bun": "latest",
+    "esbuild": "^0.25",
     "typescript": "^5"
   }
 }
