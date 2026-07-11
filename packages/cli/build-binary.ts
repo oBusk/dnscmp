@@ -22,7 +22,7 @@ await build({
   bundle: true,
   platform: "node",
   format: "esm",
-  outfile: "release/sea-prep.js",
+  outfile: "release/sea-bundle.js",
   define: {
     __DNSCMP_WIN32_BUILD__: String(isWin),
   },
@@ -33,7 +33,7 @@ const outfile = `release/dnscmp-${version}${ext}`;
 writeFileSync(
   "release/sea-config.json",
   JSON.stringify({
-    main: "release/sea-prep.js",
+    main: "release/sea-bundle.js",
     mainFormat: "module",
     output: outfile,
     disableExperimentalSEAWarning: true,
