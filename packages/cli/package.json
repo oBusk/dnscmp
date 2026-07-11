@@ -41,6 +41,6 @@
   },
   "devDependencies": {
     "esbuild": "~0.28",
-    "typescript": "^6"
+    "typescript": "^7"
   }
 }

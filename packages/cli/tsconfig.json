@@ -4,7 +4,8 @@
     "composite": true,
     "rootDir": ".",
     "outDir": "../../out-tsc/cli",
-    "tsBuildInfoFile": "../../out-tsc/cli/tsconfig.tsbuildinfo"
+    "tsBuildInfoFile": "../../out-tsc/cli/tsconfig.tsbuildinfo",
+    "types": ["node"]
   },
   "include": ["src", "build-npm.ts", "build-binary.ts", "package.json"],
   "references": [
