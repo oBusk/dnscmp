@@ -52,14 +52,15 @@ jobs:
           head -n1 packages/cli/dist/index.js | grep -qx '#!/usr/bin/env node'
 
   cli-runtime:
-    name: cli-runtime (${{ matrix.runtime.label }})
-    runs-on: ubuntu-latest
+    name: cli-runtime (${{ matrix.runtime.label }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     # Deno's node-compat layer is untested for this CLI; keep it informational
     # until it has proven stable.
     continue-on-error: ${{ matrix.runtime.experimental || false }}
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, windows-latest]
         runtime:
           - { label: node-22, kind: node, version: "22.13.0", cmd: node }
           - { label: node-lts, kind: node, version: lts/*, cmd: node }
