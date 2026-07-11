@@ -1,5 +1,5 @@
 import type { DnsProvider, DnsResult } from "@dnscmp/types";
-import { Resolver } from "dns/promises";
+import { DnsClient } from "./dns-client.ts";
 
 export type { DnsProvider, DnsResult };
 
@@ -25,46 +25,62 @@ function compareResults<T extends { avg: number | null }>(
   return a.avg - b.avg;
 }
 
-function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error("ETIMEOUT")), ms);
-    promise.then(
-      (v) => { clearTimeout(timer); resolve(v); },
-      (e) => { clearTimeout(timer); reject(e); }
-    );
-  });
-}
-
 async function measureAvg(
   resolverIp: string,
   domains: string[],
   tries: number,
 ): Promise<number | null> {
-  const resolver = new Resolver();
-  resolver.setServers([resolverIp]);
-
-  let total = 0;
-  let count = 0;
-  let consecutiveFailures = 0;
-
-  for (let i = 0; i < tries; i++) {
+  let client: DnsClient;
+  try {
+    client = new DnsClient(resolverIp, QUERY_TIMEOUT_MS);
+  } catch {
+    // Malformed resolver IP or unusable socket — surface as a null
+    // average so the caller still gets a row for this resolver
+    // instead of the whole run crashing.
+    return null;
+  }
+  try {
+    // Warmup: one untimed query per domain so the timed loop measures
+    // warm-path RTT (resolver cache, NAT state, route). Individual
+    // failures are ignored, but if every warmup fails the resolver is
+    // effectively dead — return null now rather than paying another
+    // MAX_CONSECUTIVE_FAILURES * QUERY_TIMEOUT_MS in the timed loop.
+    let warmupOk = 0;
     for (const domain of domains) {
       try {
-        const start = performance.now();
-        await withTimeout(resolver.resolve4(domain), QUERY_TIMEOUT_MS);
-        total += performance.now() - start;
-        count++;
-        consecutiveFailures = 0;
+        await client.query(domain);
+        warmupOk++;
       } catch {
-        consecutiveFailures++;
-        if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
-          return null;
+        // ignore
+      }
+    }
+    if (warmupOk === 0 && domains.length > 0) {
+      return null;
+    }
+
+    let total = 0;
+    let count = 0;
+    let consecutiveFailures = 0;
+
+    for (let i = 0; i < tries; i++) {
+      for (const domain of domains) {
+        try {
+          total += await client.query(domain);
+          count++;
+          consecutiveFailures = 0;
+        } catch {
+          consecutiveFailures++;
+          if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
+            return null;
+          }
         }
       }
     }
-  }
 
-  return count > 0 ? total / count : null;
+    return count > 0 ? total / count : null;
+  } finally {
+    client.close();
+  }
 }
 
 async function measureProvider(

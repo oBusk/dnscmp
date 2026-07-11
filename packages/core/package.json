@@ -32,9 +32,11 @@
     "build": "tsc --project tsconfig.build.json"
   },
   "dependencies": {
-    "@dnscmp/types": "workspace:~"
+    "@dnscmp/types": "workspace:~",
+    "dns-packet": "^5.6.1"
   },
   "devDependencies": {
+    "@types/dns-packet": "^5.6.5",
     "@types/node": "^26.1",
     "typescript": "^7"
   }

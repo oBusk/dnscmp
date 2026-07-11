@@ -3,7 +3,10 @@
   "compilerOptions": {
     "composite": false,
     "emitDeclarationOnly": false,
-    "allowImportingTsExtensions": false,
+    // Sources import sibling modules as "./x.ts" (required for Node's
+    // native type stripping); rewrite to "./x.js" in the emitted
+    // output so dist resolves under plain Node ESM.
+    "rewriteRelativeImportExtensions": true,
     "outDir": "dist"
   }
 }
