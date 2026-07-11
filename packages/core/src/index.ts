@@ -1,5 +1,5 @@
 import type { DnsProvider, DnsResult } from "@dnscmp/types";
-import { DnsClient } from "./dns-client.ts";
+import { DnsMeasurementClient } from "./dns-measurement-client.ts";
 
 export type { DnsProvider, DnsResult };
 
@@ -30,9 +30,9 @@ async function measureAvg(
   domains: string[],
   tries: number,
 ): Promise<number | null> {
-  let client: DnsClient;
+  let client: DnsMeasurementClient;
   try {
-    client = new DnsClient(resolverIp, QUERY_TIMEOUT_MS);
+    client = new DnsMeasurementClient(resolverIp, QUERY_TIMEOUT_MS);
   } catch {
     // Malformed resolver IP or unusable socket — surface as a null
     // average so the caller still gets a row for this resolver
@@ -40,11 +40,8 @@ async function measureAvg(
     return null;
   }
   try {
-    // Warmup: one untimed query per domain so the timed loop measures
-    // warm-path RTT (resolver cache, NAT state, route). Individual
-    // failures are ignored, but if every warmup fails the resolver is
-    // effectively dead — return null now rather than paying another
-    // MAX_CONSECUTIVE_FAILURES * QUERY_TIMEOUT_MS in the timed loop.
+    // Untimed warmup query per domain; if the resolver never
+    // responds at all, skip the timed loop.
     let warmupOk = 0;
     for (const domain of domains) {
       try {
