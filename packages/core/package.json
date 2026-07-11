@@ -23,6 +23,11 @@
   },
   "license": "MIT",
   "author": "Oscar Busk (https://github.com/oBusk)",
+  "engines": {
+    "node": "^22.23.0 || ^24.18.0 || >=26.5.0",
+    "bun": ">=1.1.0",
+    "deno": ">=2.0.0"
+  },
   "scripts": {
     "build": "tsc --project tsconfig.build.json"
   },
