@@ -1,16 +1,22 @@
 import { randomInt } from "node:crypto";
-import { encode, RECURSION_DESIRED } from "dns-packet";
+import { decode, encode, RECURSION_DESIRED, type DecodedPacket } from "dns-packet";
 import { UdpClient } from "./udp-client.ts";
 
 const DNS_PORT = 53;
 
-export interface DnsQueryResult {
-  rcode: number;
-  rtt: number;
+// dns-packet sets `rcode` at runtime but @types/dns-packet omits it.
+export type DnsPacket = DecodedPacket & { rcode?: string };
+
+export interface DnsResponse {
+  packet: DnsPacket;
+  networkMs: number;
+  parseMs: number;
 }
 
 /**
- * Sends a DNS A-record query to a resolver over UDP.
+ * DNS client that sends A-record queries to a resolver over UDP and
+ * returns the decoded response, along with how long the network
+ * round-trip and response parsing took.
  */
 export class DnsClient {
   readonly #udp: UdpClient;
@@ -19,22 +25,23 @@ export class DnsClient {
     this.#udp = new UdpClient(resolverIp, DNS_PORT);
   }
 
-  async query(domain: string, timeoutMs: number): Promise<DnsQueryResult> {
+  async query(domain: string, timeoutMs: number): Promise<DnsResponse> {
     const id = randomInt(0x10000);
-    const packet = encode({
+    const query = encode({
       type: "query",
       id,
       flags: RECURSION_DESIRED,
       questions: [{ type: "A", name: domain }],
     });
     const { data, rtt } = await this.#udp.request(
-      packet,
+      query,
       timeoutMs,
       (msg) => msg.length >= 12 && msg.readUInt16BE(0) === id,
     );
-    // Only check RCODE — never parse the rest of the packet, it's
-    // from an untrusted source.
-    return { rcode: data.readUInt8(3) & 0x0f, rtt };
+    const parseStart = performance.now();
+    const packet: DnsPacket = decode(data);
+    const parseMs = performance.now() - parseStart;
+    return { packet, networkMs: rtt, parseMs };
   }
 
   close(): void {
