@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/oBusk/dnscmp/compare/@dnscmp/types@v0.2.1...@dnscmp/types@v0.2.2) (2026-07-12)
+
+
+### Miscellaneous Chores
+
+* release 0.2.2 ([5fa3221](https://github.com/oBusk/dnscmp/commit/5fa3221064afc9a225d8bacfc93f6d0d8a16f30e))
+
 ## [0.2.1](https://github.com/oBusk/dnscmp/compare/@dnscmp/types@v0.2.0...@dnscmp/types@v0.2.1) (2026-07-12)
 
 
