@@ -113,6 +113,9 @@ jobs:
           run_install: true
           cache: true
 
+      - name: Build workspace dependencies
+        run: pnpm --filter @dnscmp/core build && pnpm --filter @dnscmp/providers build
+
       - name: Build binary
         run: pnpm --filter dnscmp build:binary
 
