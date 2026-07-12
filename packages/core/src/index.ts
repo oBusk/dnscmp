@@ -15,10 +15,7 @@ export interface DnscmpOptions {
   onResult?: (result: DnsResult) => void;
 }
 
-function compareResults<T extends { avg: number | null }>(
-  a: T,
-  b: T,
-): number {
+function compareResults<T extends { avg: number | null }>(a: T, b: T): number {
   if (a.avg === null && b.avg === null) return 0;
   if (a.avg === null) return 1;
   if (b.avg === null) return -1;
@@ -42,7 +39,14 @@ async function measureAvg(
     let consecutiveFailures = 0;
 
     for (const domain of domains) {
-      for (let i = 0; i <= tries; i++) {
+      // Warm up resolver to ensure entry is cached
+      try {
+        await client.query(domain, QUERY_TIMEOUT_MS);
+      } catch {
+        // Ignore warm-up failures
+      }
+
+      for (let i = 0; i < tries; i++) {
         try {
           const { packet, networkMs } = await client.query(
             domain,
@@ -51,19 +55,13 @@ async function measureAvg(
           if (packet.rcode !== "NOERROR") {
             throw new Error(`EBADRCODE:${packet.rcode}`);
           }
-          // First query per domain is warmup — discard the timing.
-          if (i === 0) continue;
           total += networkMs;
           count++;
           consecutiveFailures = 0;
         } catch {
-          // Warmup failures don't count toward the consecutive limit,
-          // but a domain that fails warmup still proceeds to timed tries.
-          if (i > 0) {
-            consecutiveFailures++;
-            if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
-              return null;
-            }
+          consecutiveFailures++;
+          if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
+            return null;
           }
         }
       }
