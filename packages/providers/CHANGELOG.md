@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.3](https://github.com/oBusk/dnscmp/compare/@dnscmp/providers@v0.2.2...@dnscmp/providers@v0.2.3) (2026-07-12)
+
+
+### Miscellaneous Chores
+
+* release 0.2.3 ([a865e1d](https://github.com/oBusk/dnscmp/commit/a865e1d25eff4ea8987163bffc8355275960be53))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @dnscmp/types bumped to 0.2.3
+
 ## [0.2.2](https://github.com/oBusk/dnscmp/compare/@dnscmp/providers@v0.2.1...@dnscmp/providers@v0.2.2) (2026-07-12)
 
 
