@@ -58,7 +58,7 @@ jobs:
         if: ${{ needs.release-please.outputs.core_release_created }}
         run: |
           pnpm --filter @dnscmp/core build
-          pnpm --filter @dnscmp/core pack
+          pnpm --filter @dnscmp/core pack --pack-destination packages/core
           npx npm@latest publish packages/core/*.tgz --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -67,7 +67,7 @@ jobs:
         if: ${{ needs.release-please.outputs.providers_release_created }}
         run: |
           pnpm --filter @dnscmp/providers build
-          pnpm --filter @dnscmp/providers pack
+          pnpm --filter @dnscmp/providers pack --pack-destination packages/providers
           npx npm@latest publish packages/providers/*.tgz --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -75,7 +75,7 @@ jobs:
       - name: Publish @dnscmp/types
         if: ${{ needs.release-please.outputs.types_release_created }}
         run: |
-          pnpm --filter @dnscmp/types pack
+          pnpm --filter @dnscmp/types pack --pack-destination packages/types
           npx npm@latest publish packages/types/*.tgz --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -84,7 +84,7 @@ jobs:
         if: ${{ needs.release-please.outputs.cli_release_created }}
         run: |
           pnpm --filter dnscmp build:node
-          pnpm --filter dnscmp pack
+          pnpm --filter dnscmp pack --pack-destination packages/cli
           npx npm@latest publish packages/cli/*.tgz --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
