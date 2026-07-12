@@ -1,5 +1,5 @@
 import type { DnsProvider, DnsResult } from "@dnscmp/types";
-import { Resolver } from "dns/promises";
+import { DnsClient } from "./dns-client.ts";
 
 export type { DnsProvider, DnsResult };
 
@@ -15,24 +15,11 @@ export interface DnscmpOptions {
   onResult?: (result: DnsResult) => void;
 }
 
-function compareResults<T extends { avg: number | null }>(
-  a: T,
-  b: T,
-): number {
+function compareResults<T extends { avg: number | null }>(a: T, b: T): number {
   if (a.avg === null && b.avg === null) return 0;
   if (a.avg === null) return 1;
   if (b.avg === null) return -1;
   return a.avg - b.avg;
-}
-
-function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error("ETIMEOUT")), ms);
-    promise.then(
-      (v) => { clearTimeout(timer); resolve(v); },
-      (e) => { clearTimeout(timer); reject(e); }
-    );
-  });
 }
 
 async function measureAvg(
@@ -40,31 +27,50 @@ async function measureAvg(
   domains: string[],
   tries: number,
 ): Promise<number | null> {
-  const resolver = new Resolver();
-  resolver.setServers([resolverIp]);
+  let client: DnsClient;
+  try {
+    client = new DnsClient(resolverIp);
+  } catch {
+    return null;
+  }
+  try {
+    let total = 0;
+    let count = 0;
+    let consecutiveFailures = 0;
 
-  let total = 0;
-  let count = 0;
-  let consecutiveFailures = 0;
-
-  for (let i = 0; i < tries; i++) {
     for (const domain of domains) {
+      // Warm up resolver to ensure entry is cached
       try {
-        const start = performance.now();
-        await withTimeout(resolver.resolve4(domain), QUERY_TIMEOUT_MS);
-        total += performance.now() - start;
-        count++;
-        consecutiveFailures = 0;
+        await client.query(domain, QUERY_TIMEOUT_MS);
       } catch {
-        consecutiveFailures++;
-        if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
-          return null;
+        // Ignore warm-up failures
+      }
+
+      for (let i = 0; i < tries; i++) {
+        try {
+          const { packet, networkMs } = await client.query(
+            domain,
+            QUERY_TIMEOUT_MS,
+          );
+          if (packet.rcode !== "NOERROR") {
+            throw new Error(`EBADRCODE:${packet.rcode}`);
+          }
+          total += networkMs;
+          count++;
+          consecutiveFailures = 0;
+        } catch {
+          consecutiveFailures++;
+          if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
+            return null;
+          }
         }
       }
     }
-  }
 
-  return count > 0 ? total / count : null;
+    return count > 0 ? total / count : null;
+  } finally {
+    client.close();
+  }
 }
 
 async function measureProvider(
