@@ -1,5 +1,10 @@
 import { randomInt } from "node:crypto";
-import { decode, encode, RECURSION_DESIRED, type DecodedPacket } from "dns-packet";
+import {
+  decode,
+  encode,
+  RECURSION_DESIRED,
+  type DecodedPacket,
+} from "dns-packet";
 import { UdpClient } from "./udp-client.ts";
 
 const DNS_PORT = 53;
@@ -33,7 +38,7 @@ export class DnsClient {
       flags: RECURSION_DESIRED,
       questions: [{ type: "A", name: domain }],
     });
-    const { data, rtt } = await this.#udp.request(
+    const { data, networkMs } = await this.#udp.request(
       query,
       timeoutMs,
       (msg) => msg.length >= 12 && msg.readUInt16BE(0) === id,
@@ -41,7 +46,7 @@ export class DnsClient {
     const parseStart = performance.now();
     const packet: DnsPacket = decode(data);
     const parseMs = performance.now() - parseStart;
-    return { packet, networkMs: rtt, parseMs };
+    return { packet, networkMs, parseMs };
   }
 
   close(): void {

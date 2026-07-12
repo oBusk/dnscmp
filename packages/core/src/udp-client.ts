@@ -3,7 +3,7 @@ import { isIP } from "node:net";
 
 export interface UdpResponse {
   data: Buffer;
-  rtt: number;
+  networkMs: number;
 }
 
 /**
@@ -85,7 +85,7 @@ export class UdpClient {
         const rtt = performance.now() - t0;
         if (isMatch(data)) {
           cleanup();
-          resolve({ data, rtt });
+          resolve({ data, networkMs: rtt });
         }
       };
       const onError = (err: Error) => {
@@ -99,7 +99,7 @@ export class UdpClient {
         cleanup();
         reject(new Error("ETIMEOUT"));
       }, timeoutMs);
-      
+
       const t0 = performance.now();
       socket.send(payload, this.#port, this.#host, (err) => {
         if (err) {
