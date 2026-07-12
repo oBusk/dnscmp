@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.2.0](https://github.com/oBusk/dnscmp/compare/dnscmp@v0.1.0...dnscmp@v0.2.0) (2026-07-12)
+
+
+### Bug Fixes
+
+* **cli:** call process.exit(0) to ensure process terminates ([8a7105b](https://github.com/oBusk/dnscmp/commit/8a7105b469dbf00f1c1d472d837ea0c4c5f649c0))
+
+
+### Miscellaneous Chores
+
+* release 0.2.0 ([abe8c71](https://github.com/oBusk/dnscmp/commit/abe8c71746c9def4c0386d064d9f27248e1a7ca9))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @dnscmp/core bumped to 0.2.0
+    * @dnscmp/providers bumped to 0.2.0
+    * @dnscmp/types bumped to 0.2.0
+
 ## [0.1.0](https://github.com/oBusk/dnscmp/compare/dnscmp@v0.0.6...dnscmp@v0.1.0) (2026-04-22)
 
 
