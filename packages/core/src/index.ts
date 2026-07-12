@@ -1,5 +1,5 @@
 import type { DnsProvider, DnsResult } from "@dnscmp/types";
-import { DnsMeasurementClient } from "./dns-measurement-client.ts";
+import { DnsClient } from "./dns-client.ts";
 
 export type { DnsProvider, DnsResult };
 
@@ -30,45 +30,40 @@ async function measureAvg(
   domains: string[],
   tries: number,
 ): Promise<number | null> {
-  let client: DnsMeasurementClient;
+  let client: DnsClient;
   try {
-    client = new DnsMeasurementClient(resolverIp, QUERY_TIMEOUT_MS);
+    client = new DnsClient(resolverIp);
   } catch {
-    // Malformed resolver IP or unusable socket — surface as a null
-    // average so the caller still gets a row for this resolver
-    // instead of the whole run crashing.
     return null;
   }
   try {
-    // Untimed warmup query per domain; if the resolver never
-    // responds at all, skip the timed loop.
-    let warmupOk = 0;
-    for (const domain of domains) {
-      try {
-        await client.query(domain);
-        warmupOk++;
-      } catch {
-        // ignore
-      }
-    }
-    if (warmupOk === 0 && domains.length > 0) {
-      return null;
-    }
-
     let total = 0;
     let count = 0;
     let consecutiveFailures = 0;
 
-    for (let i = 0; i < tries; i++) {
-      for (const domain of domains) {
+    for (const domain of domains) {
+      for (let i = 0; i <= tries; i++) {
         try {
-          total += await client.query(domain);
+          const { packet, networkMs } = await client.query(
+            domain,
+            QUERY_TIMEOUT_MS,
+          );
+          if (packet.rcode !== "NOERROR") {
+            throw new Error(`EBADRCODE:${packet.rcode}`);
+          }
+          // First query per domain is warmup — discard the timing.
+          if (i === 0) continue;
+          total += networkMs;
           count++;
           consecutiveFailures = 0;
         } catch {
-          consecutiveFailures++;
-          if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
-            return null;
+          // Warmup failures don't count toward the consecutive limit,
+          // but a domain that fails warmup still proceeds to timed tries.
+          if (i > 0) {
+            consecutiveFailures++;
+            if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
+              return null;
+            }
           }
         }
       }
