@@ -47,20 +47,22 @@ export class UdpClient {
   }
 
   #bindToPort(): Promise<void> {
-    if (this.#bindToPortPromise) return this.#bindToPortPromise;
-    this.#bindToPortPromise = new Promise<void>((resolve, reject) => {
-      const onError = (err: Error) => {
-        this.#socket.off("listening", onListening);
-        reject(err);
-      };
-      const onListening = () => {
-        this.#socket.off("error", onError);
-        resolve();
-      };
-      this.#socket.once("listening", onListening);
-      this.#socket.once("error", onError);
-      this.#socket.bind(0);
-    });
+    if (this.#bindToPortPromise == null) {
+      this.#bindToPortPromise = new Promise<void>((resolve, reject) => {
+        const onError = (err: Error) => {
+          this.#socket.off("listening", onListening);
+          reject(err);
+        };
+        const onListening = () => {
+          this.#socket.off("error", onError);
+          resolve();
+        };
+        this.#socket.once("listening", onListening);
+        this.#socket.once("error", onError);
+        this.#socket.bind(0);
+      });
+    }
+
     return this.#bindToPortPromise;
   }
 
@@ -81,9 +83,10 @@ export class UdpClient {
 
       const onMessage = (data: Buffer) => {
         const rtt = performance.now() - t0;
-        if (!isMatch(data)) return;
-        cleanup();
-        resolve({ data, rtt });
+        if (isMatch(data)) {
+          cleanup();
+          resolve({ data, rtt });
+        }
       };
       const onError = (err: Error) => {
         cleanup();
@@ -96,6 +99,7 @@ export class UdpClient {
         cleanup();
         reject(new Error("ETIMEOUT"));
       }, timeoutMs);
+      
       const t0 = performance.now();
       socket.send(payload, this.#port, this.#host, (err) => {
         if (err) {
