@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.2.0](https://github.com/oBusk/dnscmp/compare/@dnscmp/core@v0.1.0...@dnscmp/core@v0.2.0) (2026-07-12)
+
+
+### Bug Fixes
+
+* **core:** replace Promise.race with explicit timer cleanup in withTimeout ([581c9b5](https://github.com/oBusk/dnscmp/commit/581c9b5f9b8eb0635f5c5d95d802d3a408cb2ef4))
+
+
+### Miscellaneous Chores
+
+* release 0.2.0 ([abe8c71](https://github.com/oBusk/dnscmp/commit/abe8c71746c9def4c0386d064d9f27248e1a7ca9))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @dnscmp/types bumped to 0.2.0
+
 ## [0.1.0](https://github.com/oBusk/dnscmp/compare/@dnscmp/core@v0.0.4...@dnscmp/core@v0.1.0) (2026-04-22)
 
 
