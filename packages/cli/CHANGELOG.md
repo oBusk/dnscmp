@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.2.1](https://github.com/oBusk/dnscmp/compare/dnscmp@v0.2.0...dnscmp@v0.2.1) (2026-07-12)
+
+
+### Miscellaneous Chores
+
+* release 0.2.1 ([c47ba28](https://github.com/oBusk/dnscmp/commit/c47ba289ad2b73fc32056ac546380039c1485189))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @dnscmp/core bumped to 0.2.1
+    * @dnscmp/providers bumped to 0.2.1
+    * @dnscmp/types bumped to 0.2.1
+
 ## [0.2.0](https://github.com/oBusk/dnscmp/compare/dnscmp@v0.1.0...dnscmp@v0.2.0) (2026-07-12)
 
 
