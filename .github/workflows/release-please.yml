@@ -83,7 +83,7 @@ jobs:
       - name: Build and publish dnscmp
         if: ${{ needs.release-please.outputs.cli_release_created }}
         run: |
-          pnpm --filter dnscmp build:node
+          pnpm --filter dnscmp build:npm
           pnpm --filter dnscmp pack --pack-destination packages/cli
           npx npm@latest publish packages/cli/*.tgz --provenance
         env:
