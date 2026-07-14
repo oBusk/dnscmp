@@ -10,7 +10,7 @@
   },
   "packageManager": "pnpm@11.11.0",
   "scripts": {
-    "build": "pnpm --filter @dnscmp/core build && pnpm --filter @dnscmp/providers build && pnpm --filter dnscmp build",
+    "build": "pnpm --if-present -r run build",
     "start": "node packages/cli/src/index.ts",
     "typecheck": "tsc --build"
   },
