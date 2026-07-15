@@ -29,11 +29,14 @@ jobs:
 
       - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
-          path: out-tsc
-          key: typecheck-tsbuildinfo-${{ runner.os }}-${{ github.ref }}-${{ github.sha }}
+          path: |
+            out-tsc
+            packages/core/dist
+            packages/providers/dist
+          key: typecheck-cache-v2-${{ runner.os }}-${{ github.ref }}-${{ github.sha }}
           restore-keys: |
-            typecheck-tsbuildinfo-${{ runner.os }}-${{ github.ref }}-
-            typecheck-tsbuildinfo-${{ runner.os }}-
+            typecheck-cache-v2-${{ runner.os }}-${{ github.ref }}-
+            typecheck-cache-v2-${{ runner.os }}-
 
       - run: pnpm run typecheck
 
