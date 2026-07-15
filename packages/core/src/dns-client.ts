@@ -26,8 +26,8 @@ export interface DnsResponse {
 export class DnsClient {
   readonly #udp: UdpClient;
 
-  constructor(resolverIp: string) {
-    this.#udp = new UdpClient(resolverIp, DNS_PORT);
+  constructor(resolverIp: string, port: number = DNS_PORT) {
+    this.#udp = new UdpClient(resolverIp, port);
   }
 
   async query(domain: string, timeoutMs: number): Promise<DnsResponse> {

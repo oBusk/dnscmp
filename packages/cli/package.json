@@ -24,7 +24,8 @@
     "build": "node build-npm.ts && node build-binary.ts",
     "build:npm": "node build-npm.ts",
     "build:binary": "node build-binary.ts",
-    "start": "node src/index.ts"
+    "start": "node src/index.ts",
+    "test": "node --test \"src/**/*.test.ts\""
   },
   "engines": {
     "node": "^22.23.0 || ^24.18.0 || >=26.5.0",
