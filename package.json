@@ -12,7 +12,8 @@
   "scripts": {
     "build": "pnpm --if-present -r run build",
     "start": "node packages/cli/src/index.ts",
-    "typecheck": "tsc --build"
+    "typecheck": "tsc --build",
+    "test": "pnpm --if-present -r run test"
   },
   "peerDependencies": {
     "@types/node": "^26.1",

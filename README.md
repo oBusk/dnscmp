@@ -25,3 +25,4 @@ pnpm start
 | `pnpm start` | Run the CLI directly from source (no build needed) |
 | `pnpm run build` | Build all packages for publishing |
 | `pnpm run typecheck` | Type-check the full project via tsc project references |
+| `pnpm run test` | Run each package's tests via Node's built-in test runner |

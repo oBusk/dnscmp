@@ -29,7 +29,8 @@
     "deno": ">=2.0.0"
   },
   "scripts": {
-    "build": "tsc --project tsconfig.build.json"
+    "build": "tsc --project tsconfig.build.json",
+    "test": "node --test \"src/**/*.test.ts\""
   },
   "dependencies": {
     "@dnscmp/types": "workspace:~",

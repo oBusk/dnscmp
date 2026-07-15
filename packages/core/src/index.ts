@@ -12,6 +12,8 @@ export interface DnscmpOptions {
   providers: DnsProvider[];
   domains?: string[];
   tries?: number;
+  /** DNS port to query, mainly useful for testing against a local resolver. Defaults to 53. */
+  port?: number;
   onResult?: (result: DnsResult) => void;
 }
 
@@ -26,10 +28,11 @@ async function measureAvg(
   resolverIp: string,
   domains: string[],
   tries: number,
+  port: number | undefined,
 ): Promise<number | null> {
   let client: DnsClient;
   try {
-    client = new DnsClient(resolverIp);
+    client = new DnsClient(resolverIp, port);
   } catch {
     return null;
   }
@@ -77,11 +80,12 @@ async function measureProvider(
   provider: DnsProvider,
   domains: string[],
   tries: number,
+  port: number | undefined,
 ): Promise<DnsResult> {
   const resolverResults = await Promise.all(
     provider.resolvers.map(async (resolverIp) => ({
       resolverIp,
-      avg: await measureAvg(resolverIp, domains, tries),
+      avg: await measureAvg(resolverIp, domains, tries, port),
     })),
   );
 
@@ -94,10 +98,11 @@ async function measureProvider(
 export async function dnscmp(options: DnscmpOptions): Promise<DnsResult[]> {
   const domains = options.domains ?? DEFAULT_DOMAINS;
   const tries = options.tries ?? DEFAULT_TRIES;
+  const port = options.port;
 
   const results = await Promise.all(
     options.providers.map(async (provider) => {
-      const result = await measureProvider(provider, domains, tries);
+      const result = await measureProvider(provider, domains, tries, port);
       options.onResult?.(result);
       return result;
     }),
