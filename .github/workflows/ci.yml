@@ -33,10 +33,10 @@ jobs:
             out-tsc
             packages/core/dist
             packages/providers/dist
-          key: typecheck-cache-v2-${{ runner.os }}-${{ github.ref }}-${{ github.sha }}
+          key: typecheck-cache-${{ runner.os }}-${{ github.ref }}-${{ github.sha }}
           restore-keys: |
-            typecheck-cache-v2-${{ runner.os }}-${{ github.ref }}-
-            typecheck-cache-v2-${{ runner.os }}-
+            typecheck-cache-${{ runner.os }}-${{ github.ref }}-
+            typecheck-cache-${{ runner.os }}-
 
       - run: pnpm run typecheck
 
